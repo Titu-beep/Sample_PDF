@@ -1,4 +1,8 @@
 package com.example.sample_pdf_app;
+
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -6,7 +10,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.pdf.PdfDocument;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -14,7 +17,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -22,9 +24,6 @@ import androidx.core.content.ContextCompat;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,10 +60,13 @@ public class MainActivity extends AppCompatActivity {
             requestPermission();
         }
 
-        generatePDFbtn.setOnClickListener(v -> {
-            // calling method to
-            // generate our PDF file.
-            generatePDF();
+        generatePDFbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // calling method to
+                // generate our PDF file.
+                generatePDF();
+            }
         });
     }
 
@@ -72,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private void generatePDF() {
         // creating an object variable
         // for our PDF document.
-        PdfDocument pdfDocument = new PdfDocument();
+        PdfDocument document = new PdfDocument();
 
         // two variables for paint "paint" is used
         // for drawing shapes and we will use "title"
@@ -88,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
         // below line is used for setting
         // start page for our PDF file.
-        PdfDocument.Page myPage = pdfDocument.startPage(mypageInfo);
+        PdfDocument.Page myPage = document.startPage(mypageInfo);
 
         // creating a variable for canvas
         // from our page of PDF.
@@ -133,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
         // after adding all attributes to our
         // PDF file we will be finishing our page.
-        pdfDocument.finishPage(myPage);
+        document.finishPage(myPage);
 
         // below line is used to set the name of
         // our PDF file and its path.
@@ -142,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             // after creating a file name we will
             // write our PDF file to that location.
-            pdfDocument.writeTo(new FileOutputStream(file));
+            document.writeTo(new FileOutputStream(file));
 
             // below line is to print toast message
             // on completion of PDF generation.
@@ -154,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
         }
         // after storing our pdf to that
         // location we are closing our PDF file.
-        pdfDocument.close();
+        document.close();
     }
 
     private boolean checkPermission() {
